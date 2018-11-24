@@ -170,12 +170,76 @@ public class Game extends GameCore {
     }
 
 
+
+    /**
+     * 
+     *  
+     */
     public void updateCentipede(long elapsedTime){
 
-        for(Centipede centipede : _centipedes){
+        // for(Centipede centipede : _centipedes){
+        //     centipede.update(elapsedTime);
+        // }
 
+
+        //head is at the end of the array
+        // Centipede head = _centipedes.get(numSegments - 1);
+        //default vY = 0
+        // head.setVelocityY(0);
+        // Rectangle r1   = head.getBounds();
+
+
+        // for(Mushroom m: _mushrooms)
+        // {
+        //     Rectangle r2 = m.getBounds();
+        //     if (r1.intersects(r2)) {
+        //         // if(!head.isDirectionVertical()){
+        //         head.hitMushroom();
+        //         // System.out.printf("head is %s\n\n",head.getState());
+        //         // }
+        //     }
+        // }
+
+        
+// 
+
+        // Translate each segment except for the head to the position of the 
+        // segment in front of it
+        for(int i = 0; i < numSegments; i ++){
+
+            
+            // _centipedes.get(i).setNextState(_centipedes.get(i + 1).getState());
+            // System.out.printf("seg %d is %s", i, _centipedes.get(i + 1).getState());
+            // _centipedes.get(i).setVelocityY(_centipedes.get(i + 1).getVelocityY());
+            // _centipedes.get(i).update(elapsedTime);
+            // _centipedes.get(i).setVelocityX(_centipedes.get(i + 1).getVelocityX());
+            // _centipedes.get(i).setVelocityY(_centipedes.get(i + 1).getVelocityY());
+            Rectangle r1 = _centipedes.get(i).getBounds();
+
+            for(Mushroom m: _mushrooms)
+            {
+                Rectangle r2 = m.getBounds();
+                if (r1.intersects(r2)) {
+                    // if(!head.isDirectionVertical()){
+                    _centipedes.get(i).hitMushroom();
+                    // System.out.printf("head is %s\n\n",head.getState());
+                    // }
+                }
+            }
+
+            _centipedes.get(i).update(elapsedTime);
         }
+        // System.out.println();
 
+
+        // head.update(elapsedTime);
+
+
+        
+
+        
+
+       
         return;
     }
 
@@ -228,19 +292,7 @@ public class Game extends GameCore {
      */
     public void checkCollisions() {
 
-        // Rectangle r3 = _player.getBounds();
-
-        // for (Mushroom mushroom : _mushrooms) {
-
-        // Rectangle r2 = mushroom.getBounds();
-
-        // if (r3.intersects(r2)) {
-
-        // spaceship.setVisible(false);
-        // alien.setVisible(false);
-        // ingame = false;
-        // }
-        // }
+    
 
         // check if missile hit any mushroom
         // check if missile hit any centipede
@@ -346,6 +398,7 @@ public class Game extends GameCore {
 
             centipede.setY(centipede.getHeight() / 2);
             centipede.setX(screen.getWidth() - centipede.getWidth() * (i + 1));
+            centipede.setMaxY((int) ((screen.getHeight() - _player.getHeight()) * (1 - MAX_Y_PCT)));
 
             _centipedes.add(centipede);
         }

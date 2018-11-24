@@ -22,6 +22,10 @@ public class Player extends Sprite {
 
     }
 
+    // public void setMaxY(float y) {
+    //     MAX_Y = y;
+    // }
+
 
     /**
         Updates this Sprite's Animation and its position based
