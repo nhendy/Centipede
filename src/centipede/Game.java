@@ -34,7 +34,6 @@ public class Game extends GameCore {
         _missiles = new ArrayList<Missile>();
         _mushrooms = new ArrayList<Mushroom>();
         _centipedes = new ArrayList<Centipede>();
-        _spiders = new ArrayList<Spider>();
 
         // use these lines for relative mouse mode
         // inputManager.setRelativeMouseMode(true);
@@ -45,6 +44,7 @@ public class Game extends GameCore {
         createPlayer();
         createMushrooms();
         createCentipede();
+        createSpider();
 
         paused = false;
     }
@@ -58,8 +58,6 @@ public class Game extends GameCore {
 
         // draw player
         g.drawImage(_player.getImage(), Math.round(_player.getX()), Math.round(_player.getY()), null);
-
-        // g.drawString("Aliens left: " , 5, 50);
 
         // draw missiles
         for (Missile m : _missiles) {
@@ -83,8 +81,10 @@ public class Game extends GameCore {
         }
 
         g.setColor(Color.white);
-        g.drawString("Player Area ends here" , 5, (int) ((screen.getHeight() - _player.getHeight()) * (1 - MAX_Y_PCT)));
-        
+        g.drawString("Player Area ends here", 5, (int) ((screen.getHeight() - _player.getHeight()) * (1 - MAX_Y_PCT)));
+        g.drawString("Score: " + score, screen.getWidth() / 2, screen.getHeight() - g.getFont().getSize());
+        g.drawString("Lives: " + _player.getLives(), screen.getWidth() - g.getFont().getSize() * 7, screen.getHeight() - g.getFont().getSize());
+
     }
 
     /**
@@ -98,7 +98,7 @@ public class Game extends GameCore {
     private Player _player;
     private ArrayList<Mushroom> _mushrooms;
     private ArrayList<Centipede> _centipedes;
-    private ArrayList<Spider> _spiders;
+    private Spider _spider;
     private ArrayList<Missile> _missiles;
 
     /**
@@ -107,8 +107,7 @@ public class Game extends GameCore {
     private static final int NUM_MUSHROOMS = 20;
     private static final float MAX_Y_PCT = 0.05f;
     private int numSegments = 5;
-
-
+    private int score = 0;
 
     /**
      * background image
@@ -119,7 +118,6 @@ public class Game extends GameCore {
     private Image _spiderImg;
     private Image _missileImg;
     private List<Image> _mushroomImgs;
-
 
     /**
      * Is the game paused or not
@@ -138,19 +136,44 @@ public class Game extends GameCore {
     protected GameAction pause;
 
 
-    public void loadImages(){
-         // load images
+    public void restoreGame(){
+        _centipedes.clear();
+        _missiles.clear();
+
+        createCentipede();
+        restoreMushrooms();
+        recenterPlayer();
+
+    }
+
+
+    public void recenterPlayer(){
+        _player.setX(0);
+        _player.setY(screen.getHeight() - _player.getHeight());
+    }
+
+
+    public void restoreMushrooms(){
+        for(Mushroom mushroom : _mushrooms){
+            mushroom.restoreHealth();
+            changeMushroomImg(mushroom);
+        }
+    }
+
+
+    public void loadImages() {
+        // load images
         _bgImg        = loadImage("images/bgrd.png");
         _playerImg    = loadImage("images/craft.png");
         _centipedeImg = loadImage("images/centipede.png");
         _missileImg   = loadImage("images/missile.png");
         _spiderImg    = loadImage("images/Spider1.png");
-        _mushroomImgs = Arrays.asList(loadImage("images/mushroom3.png"),
+        _mushroomImgs = Arrays.asList(loadImage("images/mushroom3.png"), 
                                       loadImage("images/mushroom2.png"),
                                       loadImage("images/mushroom1.png"));
 
+    }
 
-    }   
     /**
      * Tests whether the game is paused or not.
      */
@@ -191,7 +214,8 @@ public class Game extends GameCore {
             // update centipedes
             updateCentipede(elapsedTime);
 
-            // update spiders
+            // update spider
+            updateSpider(elapsedTime);
 
             // check collisions
             checkCollisions();
@@ -200,84 +224,38 @@ public class Game extends GameCore {
     }
 
 
+    public void updateSpider(long elapsedTime){
+        
+    }
 
     /**
      * 
      *  
      */
-    public void updateCentipede(long elapsedTime){
+    public void updateCentipede(long elapsedTime) {
 
-        // for(Centipede centipede : _centipedes){
-        //     centipede.update(elapsedTime);
-        // }
-
-
-        //head is at the end of the array
-        // Centipede head = _centipedes.get(numSegments - 1);
-        //default vY = 0
-        // head.setVelocityY(0);
-        // Rectangle r1   = head.getBounds();
-
-
-        // for(Mushroom m: _mushrooms)
-        // {
-        //     Rectangle r2 = m.getBounds();
-        //     if (r1.intersects(r2)) {
-        //         // if(!head.isDirectionVertical()){
-        //         head.hitMushroom();
-        //         // System.out.printf("head is %s\n\n",head.getState());
-        //         // }
-        //     }
-        // }
-
-        
-// 
-
-        // Translate each segment except for the head to the position of the 
+        // Translate each segment except for the head to the position of the
         // segment in front of it
-        for(int i = 0; i < numSegments; i ++){
+        for (int i = 0; i < numSegments; i++) {
 
-            
-            // _centipedes.get(i).setNextState(_centipedes.get(i + 1).getState());
-            // System.out.printf("seg %d is %s", i, _centipedes.get(i + 1).getState());
-            // _centipedes.get(i).setVelocityY(_centipedes.get(i + 1).getVelocityY());
-            // _centipedes.get(i).update(elapsedTime);
-            // _centipedes.get(i).setVelocityX(_centipedes.get(i + 1).getVelocityX());
-            // _centipedes.get(i).setVelocityY(_centipedes.get(i + 1).getVelocityY());
             Rectangle r1 = _centipedes.get(i).getBounds();
 
-            for(Mushroom m: _mushrooms)
-            {
+            for (Mushroom m : _mushrooms) {
                 Rectangle r2 = m.getBounds();
                 if (r1.intersects(r2)) {
-                    // if(!head.isDirectionVertical()){
                     _centipedes.get(i).hitMushroom();
-                    // System.out.printf("head is %s\n\n",head.getState());
-                    // }
                 }
             }
 
             _centipedes.get(i).update(elapsedTime);
         }
-        // System.out.println();
-
-
-        // head.update(elapsedTime);
-
-
-        
-
-        
-
-       
         return;
     }
 
-    public void updatePlayer(long elapsedTime){
+    public void updatePlayer(long elapsedTime) {
         _player.update(elapsedTime);
 
     }
-
 
     public void updateMushrooms(long elapsedTime) {
 
@@ -295,8 +273,6 @@ public class Game extends GameCore {
         }
 
     }
-
-
 
     public void updateMissiles(long elapsedTime) {
 
@@ -322,8 +298,6 @@ public class Game extends GameCore {
      */
     public void checkCollisions() {
 
-    
-
         // check if missile hit any mushroom
         // check if missile hit any centipede
         // check if missile hit any spider
@@ -331,57 +305,114 @@ public class Game extends GameCore {
         // check if player hit any spider
         // check if player hit any centipede
 
+        Rectangle playerBds = _player.getBounds();
 
 
+        for (Centipede centipede : _centipedes) {
 
-        
-        for (Missile m : _missiles) {
+            Rectangle centBds = centipede.getBounds();
 
-            Rectangle r1 = m.getBounds();
-
-            for (Mushroom mushroom : _mushrooms) {
-
-                Rectangle r2 = mushroom.getBounds();
-
-                if (r1.intersects(r2)) {
+            if (centBds.intersects(playerBds)) {
 
 
-                    // hit the mushroom
-                    mushroom.hit();
+                // only remove the centipede
+                _player.inflictDamage();
 
-                    // remove missile
-                    m.disappear();
+                // restore game
+                restoreGame();
 
-                    if (mushroom.getLives() > 0) {
-                        changeMushroomImg(mushroom);
-                    } else {
-                        mushroom.disappear();
-                    }
+                //ignore missiles
+                break;
 
-                }
             }
 
-
-
-            for(Centipede centipede: _centipedes){
-                Rectangle r2 = centipede.getBounds();
-                if (r1.intersects(r2)) {
-
-
-                    // hit the mushroom
-                    // centipede.hit();
+            for(Missile missile: _missiles){
+                Rectangle missileBds = missile.getBounds();
+                if (centBds.intersects(missileBds)) {
 
                     // remove missile
-                    m.disappear();
+                    missile.disappear();
 
-                    //only remove the centipede
+                    // only remove the centipede
                     centipede.disappear();
 
                 }
 
 
             }
+
+
+            
         }
+
+
+
+        for (Mushroom mushroom : _mushrooms) {
+
+            Rectangle mushroomBds = mushroom.getBounds();
+
+            for(Missile missile: _missiles){
+                Rectangle missileBds = missile.getBounds();
+                if (mushroomBds.intersects(missileBds)) {
+
+                    // hit the mushroom
+                    mushroom.hit();
+
+                    // remove missile
+                    missile.disappear();
+
+                   if (mushroom.getLives() > 0) {
+                        changeMushroomImg(mushroom);
+                    } else {
+                        mushroom.disappear();
+                    }
+
+                }
+
+
+            }
+        }
+
+
+
+        // for (Missile m : _missiles) {
+
+        //     Rectangle r1 = m.getBounds();
+
+        //     for (Mushroom mushroom : _mushrooms) {
+
+        //         Rectangle r2 = mushroom.getBounds();
+
+        //         if (r1.intersects(r2)) {
+
+        //             // hit the mushroom
+        //             mushroom.hit();
+
+        //             // remove missile
+        //             m.disappear();
+
+        //             if (mushroom.getLives() > 0) {
+        //                 changeMushroomImg(mushroom);
+        //             } else {
+        //                 mushroom.disappear();
+        //             }
+
+        //         }
+        //     }
+
+        //     for (Centipede centipede : _centipedes) {
+        //         Rectangle r2 = centipede.getBounds();
+        //         if (r1.intersects(r2)) {
+
+        //             // remove missile
+        //             m.disappear();
+
+        //             // only remove the centipede
+        //             centipede.disappear();
+
+        //         }
+        //     }
+        // }
     }
 
     /**
@@ -392,22 +423,11 @@ public class Game extends GameCore {
 
         int lives = mushroom.getLives();
 
-        // if (lives == 3) {
-        //     newImg = loadImage("images/mushroom1.png");
-        //     mushroom.getAnimation().setFrame(newImg, 0);
-        // } else if (lives == 2) {
-        //     newImg = loadImage("images/mushroom2.png");
-        //     mushroom.getAnimation().setFrame(newImg, 0);
-        // } else if (lives == 1) {
-        //     newImg = _mushroomImgs.get(lives + 1);
-        //     mushroom.getAnimation().setFrame(newImg, 0);
-        // }
-
-        if(lives != 0){
+        if (lives != 0) {
             Image newImg = _mushroomImgs.get(lives - 1);
             mushroom.getAnimation().setFrame(newImg, 0);
         }
-        
+
     }
 
     /**
@@ -467,7 +487,7 @@ public class Game extends GameCore {
         // 1% of the screen height is for player
         int MAX_Y = (int) ((screen.getHeight() - _player.getHeight()) * (1 - MAX_Y_PCT));
 
-        Image mushImg = _mushroomImgs.get(0);
+        Image mushImg = _mushroomImgs.get(2);
 
         int DIM = Math.max(mushImg.getWidth(null), mushImg.getHeight(null));
 
@@ -478,7 +498,7 @@ public class Game extends GameCore {
             sample = new Point();
 
             // 20% of width not used
-            sample.x = (int) (Math.random() * (screen.getWidth() - 2* DIM) + DIM);
+            sample.x = (int) (Math.random() * (screen.getWidth() - 2 * DIM) + DIM);
 
             // starts from 10 up to MAX_Y - 10
             sample.y = (int) (Math.random() * (MAX_Y - 2 * DIM) + DIM);
@@ -535,11 +555,9 @@ public class Game extends GameCore {
         double minY = sample.y - 1 * dim;
         double maxY = sample.y + 1 * dim;
 
-
-
-
-        // System.out.printf("( %f, %f)  ----------------  (%f, %f)\n( %f, %f)  ----------------  (%f, %f)\n\n", 
-                                                    // minX, minY, maxX, minY, minX, maxY, maxX, maxY);
+        // System.out.printf("( %f, %f) ---------------- (%f, %f)\n( %f, %f)
+        // ---------------- (%f, %f)\n\n",
+        // minX, minY, maxX, minY, minX, maxY, maxX, maxY);
         for (Point point : locations) {
             if (point.x > minX && point.x < maxX) {
 
@@ -582,15 +600,13 @@ public class Game extends GameCore {
 
         exit = new GameAction("exit", GameAction.DETECT_INITAL_PRESS_ONLY);
 
-        moveLeft = new GameAction("moveLeft");
+        moveLeft  = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
-        moveDown = new GameAction("moveDown");
-        moveUp = new GameAction("moveUp");
+        moveDown  = new GameAction("moveDown");
+        moveUp    = new GameAction("moveUp");
 
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
-
         inputManager.mapToMouse(fire, InputManager.MOUSE_BUTTON_1);
-
         inputManager.mapToMouse(moveLeft, InputManager.MOUSE_MOVE_LEFT);
         inputManager.mapToMouse(moveRight, InputManager.MOUSE_MOVE_RIGHT);
         inputManager.mapToMouse(moveUp, InputManager.MOUSE_MOVE_UP);
@@ -601,7 +617,7 @@ public class Game extends GameCore {
      * Load Images.
      */
     private void createPlayer() {
-       
+
         Animation anim = new Animation();
         anim.addFrame(_playerImg, 250);
 

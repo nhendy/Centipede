@@ -6,9 +6,8 @@ import centipede.Input.*;
 public class Player extends Sprite {
 
 
-    private int _livesLeft = 10;
+    private int livesLeft = 10;
     
-
     public static final float SPEED = 5f;
 
    
@@ -42,5 +41,17 @@ public class Player extends Sprite {
         // System.out.println("X: " + getX() + " Y: " + getY());
         super.anim.update(elapsedTime);
     }
+
+
+    public void inflictDamage(){
+        livesLeft -- ;
+    }
+
+
+    public int getLives(){
+        return livesLeft;
+    }
+
+
     
 }

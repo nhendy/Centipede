@@ -33,7 +33,12 @@ public class Mushroom extends Sprite {
         return isVisible;
     }
 
-    
+
+    public void restoreHealth(){
+        numLives = 3;
+    }
+
+
 
 
 
