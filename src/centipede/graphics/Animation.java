@@ -38,6 +38,21 @@ public class Animation {
     }
 
 
+
+    /**
+     *  Sets the image at frame index
+     * @param image
+     * @param index
+     */
+    public synchronized void setFrame(Image image,
+        int index)
+    {
+
+        AnimFrame frame = frames.get(index);
+        frame.image = image;
+    }
+
+
     /**
         Starts this animation over from the beginning.
     */
@@ -79,6 +94,10 @@ public class Animation {
             return getFrame(currFrameIndex).image;
         }
     }
+
+
+
+
 
 
     private AnimFrame getFrame(int i) {

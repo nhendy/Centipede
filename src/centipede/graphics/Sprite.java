@@ -1,6 +1,7 @@
 package centipede.graphics;
 
 import java.awt.Image;
+import java.awt.Rectangle;
 
 public class Sprite {
 
@@ -124,5 +125,17 @@ public class Sprite {
     */
     public Image getImage() {
         return anim.getImage();
+    }
+
+    public Animation getAnimation(){
+        return anim;
+    }
+
+    /**
+     * 
+     * @return Bounding rectangle of the object
+     */
+    public Rectangle getBounds() {
+        return new Rectangle(Math.round(x),  Math.round(y), getWidth(), getHeight());
     }
 }

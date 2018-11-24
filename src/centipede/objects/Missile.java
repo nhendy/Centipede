@@ -7,14 +7,14 @@ public class Missile extends Sprite{
 
 
 
-    private boolean _isVisible = true;
+    private boolean isVisible = true;
 
 
 
     public Missile(Animation anim)
     {
         super(anim);
-        setVelocityY(-1);
+        setVelocityY(-10);
         setVelocityX(0);
     }
 
@@ -27,18 +27,18 @@ public class Missile extends Sprite{
     @Override
     public void update(long elapsedTime) {
 
-        float tmpX = getX() + getVelocityX() * elapsedTime;
-        float tmpY = getY() + getVelocityY() * elapsedTime;
+        float tmpX = getX() + getVelocityX() ;
+        float tmpY = getY() + getVelocityY() ;
 
-        _isVisible = tmpX <= 0? false: tmpX >= B_WIDTH - getWidth() ? false : true;  
-        _isVisible = tmpY <= 0? false: tmpY >= B_HEIGHT - getHeight()? false : _isVisible; 
+        isVisible = tmpX < 0? false: tmpX >= B_WIDTH ? false : true;  
+        isVisible = tmpY < 0? false: tmpY >= B_HEIGHT - getHeight()? false : isVisible; 
 
 
-        // System.out.println("X : " + tmpX + " Y: " + tmpY + " visible: " + _isVisible);
+        // System.out.println("X : " + tmpX + " Y: " + tmpY + " visible: " + isVisible);
         // System.out.println("vX : " + getVelocityX() + " vY: " + getVelocityY());
         // System.out.println("bH : " + B_HEIGHT);
 
-        if(_isVisible) {
+        if(isVisible) {
             setX(tmpX);
             setY(tmpY);
         }
@@ -46,9 +46,14 @@ public class Missile extends Sprite{
         super.anim.update(elapsedTime);
     }
 
+
+    public void disappear(){
+        isVisible = false;
+    }
+
     public boolean isVisible()
     {
-        return _isVisible;
+        return isVisible;
     }
 
 

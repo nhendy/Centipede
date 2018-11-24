@@ -9,7 +9,7 @@ public class Player extends Sprite {
     private int _livesLeft = 10;
     
 
-    public static final float SPEED = 0.5f;
+    public static final float SPEED = 5f;
 
    
 
@@ -31,8 +31,8 @@ public class Player extends Sprite {
     @Override
     public void update(long elapsedTime) {
 
-        float tmpX = getX() + getVelocityX() * elapsedTime;
-        float tmpY = getY() + getVelocityY() * elapsedTime;
+        float tmpX = getX() + getVelocityX() ;
+        float tmpY = getY() + getVelocityY() ;
 
         float newX = tmpX <= 0? 0: tmpX >= B_WIDTH - getWidth()? B_WIDTH - getWidth() : tmpX; 
         float newY = tmpY <= 0? 0: tmpY >= B_HEIGHT - getHeight()? B_HEIGHT - getHeight(): tmpY; 
