@@ -8,7 +8,11 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Game extends GameCore {
 
@@ -36,6 +40,7 @@ public class Game extends GameCore {
         // inputManager.setRelativeMouseMode(true);
         // inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
 
+        loadImages();
         createGameActions();
         createPlayer();
         createMushrooms();
@@ -49,7 +54,7 @@ public class Game extends GameCore {
      */
     public void draw(Graphics2D g) {
         // draw background
-        g.drawImage(_bgImage, 0, 0, null);
+        g.drawImage(_bgImg, 0, 0, null);
 
         // draw player
         g.drawImage(_player.getImage(), Math.round(_player.getX()), Math.round(_player.getY()), null);
@@ -77,6 +82,9 @@ public class Game extends GameCore {
             }
         }
 
+        g.setColor(Color.white);
+        g.drawString("Player Area ends here" , 5, (int) ((screen.getHeight() - _player.getHeight()) * (1 - MAX_Y_PCT)));
+        
     }
 
     /**
@@ -97,13 +105,21 @@ public class Game extends GameCore {
      * Constants
      */
     private static final int NUM_MUSHROOMS = 20;
-    private static final float MAX_Y_PCT = (float) 0.2;
+    private static final float MAX_Y_PCT = 0.05f;
     private int numSegments = 5;
+
+
 
     /**
      * background image
      */
-    private Image _bgImage;
+    private Image _bgImg;
+    private Image _playerImg;
+    private Image _centipedeImg;
+    private Image _spiderImg;
+    private Image _missileImg;
+    private List<Image> _mushroomImgs;
+
 
     /**
      * Is the game paused or not
@@ -121,6 +137,20 @@ public class Game extends GameCore {
     protected GameAction moveUp;
     protected GameAction pause;
 
+
+    public void loadImages(){
+         // load images
+        _bgImg        = loadImage("images/bgrd.png");
+        _playerImg    = loadImage("images/craft.png");
+        _centipedeImg = loadImage("images/centipede.png");
+        _missileImg   = loadImage("images/missile.png");
+        _spiderImg    = loadImage("images/Spider1.png");
+        _mushroomImgs = Arrays.asList(loadImage("images/mushroom3.png"),
+                                      loadImage("images/mushroom2.png"),
+                                      loadImage("images/mushroom1.png"));
+
+
+    }   
     /**
      * Tests whether the game is paused or not.
      */
@@ -301,6 +331,9 @@ public class Game extends GameCore {
         // check if player hit any spider
         // check if player hit any centipede
 
+
+
+
         
         for (Missile m : _missiles) {
 
@@ -327,6 +360,27 @@ public class Game extends GameCore {
 
                 }
             }
+
+
+
+            for(Centipede centipede: _centipedes){
+                Rectangle r2 = centipede.getBounds();
+                if (r1.intersects(r2)) {
+
+
+                    // hit the mushroom
+                    // centipede.hit();
+
+                    // remove missile
+                    m.disappear();
+
+                    //only remove the centipede
+                    centipede.disappear();
+
+                }
+
+
+            }
         }
     }
 
@@ -337,19 +391,23 @@ public class Game extends GameCore {
     public void changeMushroomImg(Mushroom mushroom) {
 
         int lives = mushroom.getLives();
-        Image newImg;
 
-        if (lives == 3) {
-            newImg = loadImage("images/mushroom1.png");
-            mushroom.getAnimation().setFrame(newImg, 0);
-        } else if (lives == 2) {
-            newImg = loadImage("images/mushroom2.png");
-            mushroom.getAnimation().setFrame(newImg, 0);
-        } else if (lives == 1) {
-            newImg = loadImage("images/mushroom3.png");
+        // if (lives == 3) {
+        //     newImg = loadImage("images/mushroom1.png");
+        //     mushroom.getAnimation().setFrame(newImg, 0);
+        // } else if (lives == 2) {
+        //     newImg = loadImage("images/mushroom2.png");
+        //     mushroom.getAnimation().setFrame(newImg, 0);
+        // } else if (lives == 1) {
+        //     newImg = _mushroomImgs.get(lives + 1);
+        //     mushroom.getAnimation().setFrame(newImg, 0);
+        // }
+
+        if(lives != 0){
+            Image newImg = _mushroomImgs.get(lives - 1);
             mushroom.getAnimation().setFrame(newImg, 0);
         }
-
+        
     }
 
     /**
@@ -361,17 +419,17 @@ public class Game extends GameCore {
         float velocityY = 0;
 
         if (moveLeft.isPressed()) {
-            velocityX -= Player.SPEED;
+            velocityX = -1 * Player.SPEED;
         }
         if (moveRight.isPressed()) {
-            velocityX += Player.SPEED;
+            velocityX = Player.SPEED;
         }
 
         if (moveDown.isPressed()) {
-            velocityY += Player.SPEED;
+            velocityY = Player.SPEED;
         }
         if (moveUp.isPressed()) {
-            velocityY -= Player.SPEED;
+            velocityY = -1 * Player.SPEED;
         }
         _player.setVelocityX(velocityX);
         _player.setVelocityY(velocityY);
@@ -386,12 +444,11 @@ public class Game extends GameCore {
     // ================================== //
 
     public void createCentipede() {
-        Image centImg = loadImage("images/centipede.png");
 
         for (int i = 0; i < numSegments; i++) {
 
             Animation anim = new Animation();
-            anim.addFrame(centImg, 250);
+            anim.addFrame(_centipedeImg, 250);
             Centipede centipede = new Centipede(anim);
 
             centipede.setBdims(screen.getWidth(), screen.getHeight());
@@ -410,7 +467,7 @@ public class Game extends GameCore {
         // 1% of the screen height is for player
         int MAX_Y = (int) ((screen.getHeight() - _player.getHeight()) * (1 - MAX_Y_PCT));
 
-        Image mushImg = loadImage("images/mushroom1.png");
+        Image mushImg = _mushroomImgs.get(0);
 
         int DIM = Math.max(mushImg.getWidth(null), mushImg.getHeight(null));
 
@@ -500,10 +557,9 @@ public class Game extends GameCore {
     }
 
     public void createMissile() {
-        Image missile_img = loadImage("images/missile.png");
 
         Animation anim = new Animation();
-        anim.addFrame(missile_img, 250);
+        anim.addFrame(_missileImg, 250);
 
         Missile missile = new Missile(anim);
         _missiles.add(missile);
@@ -545,21 +601,9 @@ public class Game extends GameCore {
      * Load Images.
      */
     private void createPlayer() {
-        // load images
-        _bgImage = loadImage("images/bgrd.png");
-
-        Image player1 = loadImage("images/craft.png");
-        // Image player2 = loadImage("../images/player2.png");
-        // Image player3 = loadImage("../images/player3.png");
-
-        // // create animation
+       
         Animation anim = new Animation();
-        anim.addFrame(player1, 250);
-        // anim.addFrame(player2, 150);
-        // anim.addFrame(player1, 150);
-        // anim.addFrame(player2, 150);
-        // anim.addFrame(player3, 200);
-        // anim.addFrame(player2, 150);
+        anim.addFrame(_playerImg, 250);
 
         _player = new Player(anim);
         _player.setBdims(screen.getWidth(), screen.getHeight());

@@ -22,7 +22,6 @@ public class Centipede extends Sprite {
         setVelocityX(direction * SPEED);
     }
 
-    // TODO
     /**
      * Updates this Sprite's Animation and its position based on the velocity. makes
      * sure it's within the bounds
@@ -35,8 +34,6 @@ public class Centipede extends Sprite {
         }
 
         state = nextState;
-
-        
 
         switch (state) {
         case MOVING_HORIZ:
@@ -96,7 +93,7 @@ public class Centipede extends Sprite {
     }
 
     public void moveVertical() {
-        setVelocityY(SPEED);
+        setVelocityY(5*SPEED);
         setVelocityX(0);
     }
 
@@ -108,8 +105,6 @@ public class Centipede extends Sprite {
     public void hitMushroom() {
         setNextState(State.MOVING_VERITCAL);
     }
-
-
 
 
     public void disappear() {
