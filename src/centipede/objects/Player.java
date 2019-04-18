@@ -6,7 +6,7 @@ import centipede.Input.*;
 public class Player extends Sprite {
 
 
-    private int livesLeft = 10;
+    private int livesLeft = 3;
     
     public static final float SPEED = 5f;
 
@@ -29,8 +29,8 @@ public class Player extends Sprite {
     @Override
     public void update(long elapsedTime) {
 
-        float tmpX = getX() + getVelocityX() ;
-        float tmpY = getY() + getVelocityY() ;
+        float tmpX = getX() + getVelocityX()  ;
+        float tmpY = getY() + getVelocityY()  ;
 
         float newX = tmpX <= 0? 0: tmpX >= B_WIDTH - getWidth()? B_WIDTH - getWidth() : tmpX; 
         float newY = tmpY <= 0? 0: tmpY >= B_HEIGHT - getHeight()? B_HEIGHT - getHeight(): tmpY; 

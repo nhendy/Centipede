@@ -3,9 +3,14 @@ src+=src/centipede/graphics/*.java
 src+=src/centipede/Input/*.java
 src+=src/centipede/objects/*.java
 src+=src/centipede/gamecore/*.java
+src+=src/centipede/sound/*.java
+src+=src/centipede/score/*.java
+
+
 
 pckg=centipede.jar
 main=centipede/Game
+seed=1212313
 
 
 all:
@@ -18,7 +23,7 @@ doc:
 
 
 centipede: all
-	java -cp bin/ ${main}
+	java -cp bin/ ${main}  ${seed}
 
 clean:
 	rm -rf bin

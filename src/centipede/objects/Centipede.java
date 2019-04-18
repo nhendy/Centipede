@@ -5,7 +5,9 @@ import centipede.graphics.*;
 public class Centipede extends Sprite {
 
     private boolean isVisible = true;
-    private static final float SPEED = 1f;
+    private static final float SPEED = 10f;
+
+    private int  lives = 2;
 
     private int direction = -1;
     private float MAX_Y;
@@ -93,7 +95,7 @@ public class Centipede extends Sprite {
     }
 
     public void moveVertical() {
-        setVelocityY(5*SPEED);
+        setVelocityY(SPEED);
         setVelocityX(0);
     }
 
@@ -115,4 +117,12 @@ public class Centipede extends Sprite {
         return isVisible;
     }
 
+
+    public void hit(){
+        lives -- ;
+    }
+
+    public int getLives(){
+        return lives;
+    }
 }

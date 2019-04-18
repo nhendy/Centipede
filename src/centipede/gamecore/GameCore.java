@@ -98,6 +98,20 @@ public abstract class GameCore {
             }
             catch (InterruptedException ex) { }
         }
+
+        // draw the screen
+        Graphics2D g = screen.getGraphics();
+        drawGameOver(g);
+        g.dispose();
+        screen.update();
+
+
+        try {
+
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
     }
 
 
@@ -109,6 +123,8 @@ public abstract class GameCore {
         // do nothing
     }
 
+
+    public abstract void drawGameOver(Graphics2D g);
 
     /**
         Draws to the screen. Subclasses must override this
